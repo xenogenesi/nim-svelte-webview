@@ -84,10 +84,23 @@ export default {
     }),
     babel({
       babelrc: false,
-      presets: ["@babel/preset-env"],
+      presets: [
+        [
+          "@babel/preset-env",
+          {
+            // "targets": "> 0.25%, not dead"
+            "targets": {
+              "edge": "44"
+            }
+          }
+        ]
+      ],
+      plugins: [
+        ["@babel/plugin-transform-arrow-functions"]
+      ],
       // plugins: ['external-helpers'],
       // externalHelpers: true,
-      exclude: 'node_modules/**'
+      //exclude: 'node_modules/**'
     }),
     terser()
   ]
