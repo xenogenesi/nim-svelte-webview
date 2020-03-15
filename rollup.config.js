@@ -6,6 +6,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import autoPreprocess from 'svelte-preprocess';
 import babel from 'rollup-plugin-babel';
 import { terser } from "rollup-plugin-terser";
+import commonjs from 'rollup-plugin-commonjs';
 
 export default {
   external: ['api'],
@@ -21,13 +22,6 @@ export default {
     }
   },
   plugins: [
-    resolve({
-      // resolve modules that are designed to run in browser
-      browser: true,
-      // a dependency in node_modules may have svelte inside it's node_modules folder
-      // dedupe option prevents bundling those duplicates
-      dedupe: ['svelte']
-    }),
     svelte({
       // By default, all .svelte and .html files are compiled
       //extensions: ['.my-custom-extension'],
@@ -82,26 +76,47 @@ export default {
       //     handler(warning);
       // }
     }),
+    resolve({
+      // resolve modules that are designed to run in browser
+      browser: true,
+      // a dependency in node_modules may have svelte inside it's node_modules folder
+      // dedupe option prevents bundling those duplicates
+      dedupe: ['svelte']
+    }),
+    commonjs(),
     babel({
       babelrc: false,
+      extensions: ['.js', '.mjs', '.html', '.svelte'],
+      runtimeHelpers: true,
+      exclude: ['node_modules/@babel/**', 'node_modules/core-js/**'],
+      //exclude: ['node_modules/**'],
       presets: [
         [
           "@babel/preset-env",
           {
-            // "targets": "> 0.25%, not dead"
-            "targets": {
-              "edge": "44"
-            }
+            modules: false,
+            // spec: true,
+            forceAllTransforms: true,
+            useBuiltIns: "usage",
+            corejs: 3,
+            targets: "> 0.25%, not dead, ie >= 11"
           }
         ]
       ],
       plugins: [
-        ["@babel/plugin-transform-arrow-functions"]
+        '@babel/plugin-transform-arrow-functions',
+        // '@babel/plugin-syntax-dynamic-import'
+        ['@babel/plugin-transform-runtime', {
+          useESModules: false
+        }]
       ],
       // plugins: ['external-helpers'],
       // externalHelpers: true,
       //exclude: 'node_modules/**'
     }),
     terser()
+    // terser({
+    //   module: true
+    // })
   ]
 };
