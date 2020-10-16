@@ -52,4 +52,4 @@ npm run build:nim    # build only nim and run it
   - [ ] support ejs for index.html
 - [ ] add css framework (bootstrap? spectre? foomantic-ui? material?)
 - [ ] fix .map loading? (see webview console)
-- [ ] support windows/macosx
+- [x] support windows/macosx
